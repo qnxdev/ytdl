@@ -1,0 +1,16 @@
+{
+  "name": "ytdl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ytdl.js",
+  "scripts": {
+    "test": "node ytdl.js https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.2",
+    "node-fetch": "^2.6.0",
+    "ytdl-core": "^3.1.1"
+  }
+}
