@@ -6,14 +6,12 @@ const ffmpeg = require("fluent-ffmpeg");
 let ffmpeg_path = "ffmpeg";
 let basedir = "./downloads";
 
-let i = 0;
-
 async function download(url) {
     ytdl.getInfo(url).then(async info => {
         if(!fs.existsSync(basedir))fs.mkdirSync(basedir);
                 
         let meta = `Upload date: ${info.videoDetails.uploadDate}\nLength: ${info.videoDetails.lengthSeconds}s\nCategory: ${info.videoDetails.category}\nChannel: ${info.videoDetails.ownerChannelName} [${info.videoDetails.author.external_channel_url} - ${info.videoDetails.ownerProfileUrl}]\nTitle: ${info.videoDetails.title}\nURL: ${info.videoDetails.video_url}\nAge restricted: ${info.videoDetails.age_restricted ? "yes" : "no"}\nPrivate: ${info.videoDetails.isPrivate ? "yes" : "no"}\nUnlisted: ${info.videoDetails.isUnlisted ? "yes" : "no"}`
-        console.log(`{${i}} [\x1b[32mINFO\x1b[0m] Downloading video... ("${info.videoDetails.title}")`);
+        console.log(`[\x1b[32mINFO\x1b[0m] Downloading video... ("${info.videoDetails.title}")`);
         if(info.videoDetails.category)meta+=`\nCategory: ${info.videoDetails.category}`
         let description = info.videoDetails.shortDescription;
         let keywords = info.videoDetails.keywords.join("\n");
@@ -25,10 +23,7 @@ async function download(url) {
         fs.writeFileSync(`${dir}/description.txt`,description)
         fs.writeFileSync(`${dir}/tags.txt`,keywords)
         ytdl(url, { filter: format => format.container === "mp4" }).pipe(fs.createWriteStream(`${dir}/video.mp4`)).on("finish",async () => {
-            console.log(`{${i}} [\x1b[32mINFO\x1b[0m] Successfully downloaded video "${info.videoDetails.title}" to folder ${dir}!`);
-            if(process.argv.slice(2).length==i) {
-                console.log("[\x1b[32mINFO\x1b[0m] All downloads finished!");
-            }
+            console.log(`[\x1b[32mINFO\x1b[0m] Successfully downloaded video "${info.videoDetails.title}" to folder ${dir}!`);
             let mpeg = new ffmpeg({source:`${dir}/video.mp4`})
             .setFfmpegPath(ffmpeg_path)
             .toFormat("mp3")
@@ -48,13 +43,13 @@ async function download(url) {
             })
         })
     }).catch(async err => {
+        i++;
         console.log(err)
-        console.log(`{${i}} [\x1b[32mINFO\x1b[0m] Invalid video :(`)
+        console.log(`[\x1b[32mINFO\x1b[0m] Invalid video :(`)
     })
 }
 
 //Tutorial: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 process.argv.slice(2).forEach(async arg => {
-    i++;
     download(arg);
 })
